@@ -1,0 +1,60 @@
+# implementation of card game - Memory
+
+import simplegui
+import random
+
+card_1 = range(8)
+card_2 = range(8)
+cards = card_1 + card_2
+
+# helper function to initialize globals
+def new_game():
+    global state, counter, exposed
+    state = 0
+    counter = 0    
+    random.shuffle(cards)
+    exposed = [False] * 16
+    
+# define event handlers
+def mouseclick(pos):
+    card_index = pos[0] // 50              
+    # add game state logic here
+    global state, index0, index1, counter    
+    if state == 0:       
+        index0 = card_index
+        exposed[index0] = True
+        state = 1
+    elif state == 1 and exposed[card_index] == False:        
+        index1 = card_index                
+        exposed[index1] = True        
+        state = 2
+        counter += 1 
+    elif state == 2 and exposed[card_index] == False:        
+        if cards[index0] != cards[index1]:
+                exposed[index0] = False
+                exposed[index1] = False               
+        index0 = card_index      
+        exposed[index0] =True
+        state = 1
+     
+def draw(canvas):  
+    for card_index in range(len(cards)):
+        card_pos = 50 * card_index                            
+        if exposed[card_index]:  
+            canvas.draw_text(str(cards[card_index]), [card_pos + 15, 65], 40, "White")
+        else:              
+            canvas.draw_polygon([(card_pos, 0), (card_pos, 100), (card_pos + 50, 100),(card_pos + 50, 0)], 1, "Red", "Green")                 
+    label.set_text("Turns = " + str(counter)) 
+    
+# create frame and add a button and labels
+frame = simplegui.create_frame("Memory", 800, 100)
+frame.add_button("Reset", new_game)
+label = frame.add_label("Turns = 0")
+
+# register event handlers
+frame.set_mouseclick_handler(mouseclick)
+frame.set_draw_handler(draw)
+
+# get things rolling
+new_game()
+frame.start()
