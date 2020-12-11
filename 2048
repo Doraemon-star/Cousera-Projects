@@ -1,0 +1,155 @@
+"""
+Clone of 2048 game.
+"""
+
+#import poc_2048_gui
+
+# Directions, DO NOT MODIFY
+UP = 1
+DOWN = 2
+LEFT = 3
+RIGHT = 4
+
+# Offsets for computing tile indices in each direction.
+# DO NOT MODIFY this dictionary.
+OFFSETS = {UP: (1, 0),
+           DOWN: (-1, 0),
+           LEFT: (0, 1),
+           RIGHT: (0, -1)}
+
+def merge(line):
+    """
+    Helper function that merges a single row or column in 2048
+    """
+    input_list = []
+    index_input = 0
+    pair_list = input_list
+    output_list = []
+    index_output = 0
+    for dummy_line_num in line:
+        # check every element in line        
+        if dummy_line_num != 0:             
+            input_list.insert(index_input, dummy_line_num)            
+            index_input += 1
+        else:
+            input_list.append(dummy_line_num)
+    
+    for dummy_index_input in range(len(input_list)-1):
+        # check every lement in input_list except last element
+        if  input_list[dummy_index_input] == input_list[dummy_index_input + 1]:
+            pair_num = input_list[dummy_index_input] * 2
+            pair_list[dummy_index_input] = pair_num
+            pair_list[dummy_index_input + 1] = 0
+        
+    for dummy_pair_num in pair_list:
+        # check every element in pari_list
+        if dummy_pair_num != 0:             
+            output_list.insert(index_output, dummy_pair_num)
+            index_output += 1
+        else:
+            output_list.append(dummy_pair_num)            
+    return output_list
+
+class TwentyFortyEight:
+    """
+    Class to run the game logic.
+    """
+
+    def __init__(self, grid_height, grid_width):
+        # replace with your code
+        self.height = grid_height
+        self.width = grid_width
+        self.initial_tiles = {UP:[(0, 0), (0, 1), (0, 2), (0, 3)]
+                              DOWN:[(3, 0), (3, 1), (3, 2), (3, 3)]
+                              LEFT:[(0, 0), (1, 0), (2, 0), (3, 0)]
+                              RIGHT:[(0, 3), (1, 3), (2, 3), (3, 3)]}
+        self.reset()
+        
+    def reset(self):
+        """
+        Reset the game so the grid is empty except for two
+        initial tiles.
+        """
+        self.board = [[(dummy_row + dummy_col)* 0 for dummy_col in range(self.width)]
+                              for dummy_row in range(self.height)]
+        self.new_tile()
+        self.new_tile()
+        
+        
+    def __str__(self):
+        """
+        Return a string representation of the grid for debugging.
+        """
+        return "The board is " + str(self.board)
+
+    def get_grid_height(self):
+        """
+        Get the height of the board.
+        """        
+        return self.height
+
+    def get_grid_width(self):
+        """
+        Get the width of the board.
+        """
+        return self.width
+
+
+    def move(self, direction):
+        """
+        Move all tiles in the given direction and add
+        a new tile if any tiles moved.
+        """
+        tem_list0 = []
+        tem_list1 = []
+        tem_list2 = []
+        tem_list3 = []
+        tiles_list = self.initial_tiles[direction]
+        for dummy_index in range(len(tiles_list)):
+            for step in range(4):
+                tiles_list[dummy_index][0] += step * OFFSETS[direction][0]
+                tiles_list[dummy_index][1] += step * OFFSETS[direction][1]
+                self.get_tile(tiles_list[dummy_index][0], tiles_list[dummy_index][1])
+                if dummy_index == 0:
+                    tem_list0.append(self.get_tile)
+                elif dummy_index == 1:
+                    tem_list1.append(self.get_tile)
+                elif dummy_index == 2:
+                    tem_list2.append(self.get_tile)    
+                elif dummy_index == 3:
+                    tem_list3.append(self.get_tile)
+        
+        
+            
+        return 
+    def new_tile(self):
+        """
+        Create a new tile in a randomly selected empty
+        square.  The tile should be 2 90% of the time and
+        4 10% of the time.
+        """
+        square_list=[] 
+        for dummy_row in range(self.height):        
+            for dummy_col in range(self.width):            
+                if self.board[dummy_row][dummy_col] == 0:  
+                    square_list.append([dummy_row, dummy_col])                 
+        select_square = random.choice(square_list)               
+        self.board[select_square[0]][select_square[1]]=random.choice([2,2,2,2,2,2,2,2,2,4])
+        
+        
+    
+    def set_tile(self, row, col, value):
+        """
+        Set the tile at position row, col to have the given value.
+        """
+        self.board[row][col] = value
+
+    def get_tile(self, row, col):
+        """
+        Return the value of the tile at position row, col.
+        """
+        # replace with your code
+        return self.board[row][col]
+    
+
+#poc_2048_gui.run_gui(TwentyFortyEight(4, 4))
